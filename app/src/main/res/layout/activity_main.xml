@@ -10,6 +10,8 @@
     tools:context="br.com.madeinlabs.dropskytest.MainActivity">
 
     <br.com.madeinlabs.dropsky.DropSkyLayout android:id="@+id/drop_sky"
+        android:background="@color/colorAccent"
+        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </RelativeLayout>
