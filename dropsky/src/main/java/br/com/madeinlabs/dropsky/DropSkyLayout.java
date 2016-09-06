@@ -4,16 +4,13 @@ import android.animation.Animator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewPropertyAnimator;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Transformation;
 import android.widget.RelativeLayout;
 
 public class DropSkyLayout extends RelativeLayout {
     private DropSkyAdapter mAdapter;
     private int mNextViewIndex;
     private float mGround;
-    private long mDurationEachView;
+    private long mDropDuration;
 
     public DropSkyLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -25,7 +22,7 @@ public class DropSkyLayout extends RelativeLayout {
 
     public void drop(long duration) {
         mNextViewIndex = mAdapter.getCount() - 1;
-        mDurationEachView = duration / mAdapter.getCount();
+        mDropDuration = duration;
         mGround = 0;
         dropItem();
     }
@@ -38,7 +35,8 @@ public class DropSkyLayout extends RelativeLayout {
             //start item on the top of the view
             dropSkyItem.setTranslationY(-getHeight());
             //translate the item until the top of the other view, the current "ground"
-            ViewPropertyAnimator animator = dropSkyItem.animate().translationY(mGround).setDuration(mDurationEachView);
+            long currentDropDuration = mDropDuration/(mNextViewIndex + 1);
+            ViewPropertyAnimator animator = dropSkyItem.animate().translationY(mGround).setDuration(currentDropDuration);
 
             mNextViewIndex--;
             animator.setListener(new Animator.AnimatorListener() {

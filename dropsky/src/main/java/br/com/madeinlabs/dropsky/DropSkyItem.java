@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 public class DropSkyItem extends RelativeLayout{
     private View mView;
@@ -28,7 +27,6 @@ public class DropSkyItem extends RelativeLayout{
     }
 
     public float getTrueHeight() {
-        ViewGroup.LayoutParams layoutParams = mView.getLayoutParams();
-        return layoutParams.height;
+        return mView.getHeight();
     }
 }
