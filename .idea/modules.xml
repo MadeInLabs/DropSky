@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DropSkyTest.iml" filepath="$PROJECT_DIR$/DropSkyTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dropsky/dropsky.iml" filepath="$PROJECT_DIR$/dropsky/dropsky.iml" />
     </modules>
   </component>
 </project>
