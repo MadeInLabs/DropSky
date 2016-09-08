@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.balysv.materialripple.MaterialRippleLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:mrl_rippleOverlay="true"
+    app:mrl_rippleColor="#55ffffff"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/layout_root"
+        android:background="@color/one"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_height="120dp">
+
+        <ImageView android:id="@+id/img_icon"
+            android:src="@drawable/pikachu"
+            android:contentDescription="@string/icon"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:scaleType="centerCrop"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+
+        <TextView android:id="@+id/txt_title"
+            android:layout_alignTop="@id/img_icon"
+            android:layout_alignBottom="@id/img_icon"
+            android:layout_toEndOf="@id/img_icon"
+            android:layout_toRightOf="@id/img_icon"
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center_vertical"
+            android:ellipsize="end"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+</com.balysv.materialripple.MaterialRippleLayout>

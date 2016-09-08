@@ -2,6 +2,7 @@ package br.com.madeinlabs.dropsky;
 
 import android.animation.Animator;
 import android.content.Context;
+import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.view.ViewPropertyAnimator;
 import android.widget.RelativeLayout;
@@ -35,7 +36,7 @@ public class DropSkyLayout extends RelativeLayout {
             //start item on the top of the view
             dropSkyItem.setTranslationY(-getHeight());
             //translate the item until the top of the other view, the current "ground"
-            long currentDropDuration = mDropDuration/(mNextViewIndex + 1);
+            long currentDropDuration = mDropDuration/mAdapter.getCount();
             ViewPropertyAnimator animator = dropSkyItem.animate().translationY(mGround).setDuration(currentDropDuration);
 
             mNextViewIndex--;

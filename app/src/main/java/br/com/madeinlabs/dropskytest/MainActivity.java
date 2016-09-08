@@ -2,9 +2,7 @@ package br.com.madeinlabs.dropskytest;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 
-import br.com.madeinlabs.dropsky.CustomDropSkyAdapter;
 import br.com.madeinlabs.dropsky.DropSkyLayout;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,23 +16,17 @@ public class MainActivity extends AppCompatActivity {
         mDropSkyLayout = (DropSkyLayout) findViewById(R.id.drop_sky);
 
         CustomDropSkyAdapter adapter = new CustomDropSkyAdapter(this);
-        int i = 0;
-        adapter.addItem((i++) + " º item");
-        adapter.addItem((i++) + " º item");
-        adapter.addItem((i++) + " º item");
-        adapter.addItem((i++) + " º item");
-        adapter.addItem((i++) + " º item");
-        adapter.addItem((i++) + " º item");
-        adapter.addItem((i++) + " º item");
-        adapter.addItem((i++) + " º item");
-        adapter.addItem((i) + " º item");
+        adapter.addItem(R.drawable.pikachu, "Profile", R.color.one);
+        adapter.addItem(R.drawable.insignia, "Map", R.color.two);
+        adapter.addItem(R.drawable.pokeball, "History", R.color.three);
+        adapter.addItem(R.drawable.egg_incubator, "Settings", R.color.four);
+        adapter.addItem(R.drawable.razz_berry, "Help", R.color.five);
         mDropSkyLayout.setAdapter(adapter);
+    }
 
-        mDropSkyLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mDropSkyLayout.drop(700);
-            }
-        });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mDropSkyLayout.drop(1500);
     }
 }
