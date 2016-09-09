@@ -7,7 +7,8 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 public class DropSkyItem extends RelativeLayout{
-    public View mView;
+    public RelativeLayout mViewContainer;
+    public View mViewItem;
 
     public DropSkyItem(Context context) {
         super(context);
@@ -18,13 +19,13 @@ public class DropSkyItem extends RelativeLayout{
         RelativeLayout root = (RelativeLayout) inflate(context, R.layout.view_drop_sky_item, this);
         setBackgroundColor(ContextCompat.getColor(context, colorResource));
 
-        RelativeLayout viewContainer = (RelativeLayout) root.findViewById(R.id.layout_true_item);
-        viewContainer.addView(view, LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mViewContainer = (RelativeLayout) root.findViewById(R.id.layout_true_item);
+        mViewContainer.addView(view, LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        mView = view;
+        mViewItem = view;
     }
 
     public int getTrueHeight() {
-        return mView.getHeight();
+        return mViewItem.getHeight();
     }
 }

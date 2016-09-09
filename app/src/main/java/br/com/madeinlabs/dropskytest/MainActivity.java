@@ -5,6 +5,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.Toast;
+
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 
 import br.com.madeinlabs.dropsky.DropSkyLayout;
 
@@ -27,6 +33,24 @@ public class MainActivity extends AppCompatActivity {
         adapter.addItem(R.drawable.psyduck, "Psyduck", R.color.six);
         adapter.addItem(R.drawable.gotcha, "Gotcha", R.color.seven);
         adapter.addItem(R.drawable.pokedex, "Pokedex", R.color.eight);
+
+        mDropSkyLayout.setListener(new DropSkyLayout.DropSkyListener() {
+            @Override
+            public void onItemAnimationEnd(View view, int index) {
+                YoYo.with(Techniques.Wave).duration(200).interpolate(new DecelerateInterpolator()).playOn(view);
+            }
+
+            @Override
+            public void onItemAnimationStart(View view, int index) {
+                YoYo.with(Techniques.Swing).duration(200).interpolate(new DecelerateInterpolator()).playOn(view);
+            }
+
+            @Override
+            public void onDropEnd() {
+                Toast.makeText(MainActivity.this, "The base was dropped", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         mDropSkyLayout.setAdapter(adapter);
     }
 

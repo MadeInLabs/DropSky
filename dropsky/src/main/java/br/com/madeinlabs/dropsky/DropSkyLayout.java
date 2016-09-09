@@ -3,6 +3,7 @@ package br.com.madeinlabs.dropsky;
 import android.animation.Animator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.widget.RelativeLayout;
@@ -12,6 +13,7 @@ public class DropSkyLayout extends RelativeLayout {
     private int mNextViewIndex;
     private float mGround;
     private long mDropDuration;
+    private DropSkyListener mListener;
 
     public DropSkyLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -52,10 +54,16 @@ public class DropSkyLayout extends RelativeLayout {
             animator.setListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animator) {
+                    if(mListener != null) {
+                        mListener.onItemAnimationStart(dropSkyItem.mViewContainer, mNextViewIndex + 1);
+                    }
                 }
 
                 @Override
                 public void onAnimationEnd(Animator animator) {
+                    if(mListener != null) {
+                        mListener.onItemAnimationEnd(dropSkyItem.mViewContainer, mNextViewIndex + 1);
+                    }
                     //update the Ground
                     mGround -= dropSkyItem.getTrueHeight();
                     dropItem();
@@ -69,6 +77,20 @@ public class DropSkyLayout extends RelativeLayout {
                 public void onAnimationRepeat(Animator animator) {
                 }
             });
+        } else {
+            if (mListener != null) {
+                mListener.onDropEnd();
+            }
         }
+    }
+
+    public void setListener(DropSkyListener listener) {
+        this.mListener = listener;
+    }
+
+    public interface DropSkyListener {
+        void onItemAnimationEnd(View view, int index);
+        void onItemAnimationStart(View view, int index);
+        void onDropEnd();
     }
 }
