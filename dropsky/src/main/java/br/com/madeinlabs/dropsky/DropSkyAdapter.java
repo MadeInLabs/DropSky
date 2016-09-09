@@ -10,6 +10,11 @@ public class DropSkyAdapter {
     private final Context mContext;
     private List<DropSkyItem> mDropSkyItems;
     private int totalHeight;
+    private Listener mListener;
+
+    public interface Listener {
+        void onItemClicked(DropSkyItem dropSkyItem, int index);
+    }
 
     public DropSkyAdapter(Context context) {
         mDropSkyItems = new LinkedList<>();
@@ -25,15 +30,27 @@ public class DropSkyAdapter {
     }
 
     public void addViewItem(View view, int colorResource) {
-        DropSkyItem dropSkyItem = new DropSkyItem(mContext, view, colorResource);
+        final DropSkyItem dropSkyItem = new DropSkyItem(mContext, view, colorResource);
 
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         totalHeight += view.getMeasuredHeight();
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mListener != null) {
+                    mListener.onItemClicked(dropSkyItem, mDropSkyItems.indexOf(dropSkyItem));
+                }
+            }
+        });
 
         mDropSkyItems.add(dropSkyItem);
     }
 
     public int getTotalHeight() {
         return totalHeight;
+    }
+
+    public void setOnItemClickListener(Listener onItemClickListener) {
+        this.mListener = onItemClickListener;
     }
 }
