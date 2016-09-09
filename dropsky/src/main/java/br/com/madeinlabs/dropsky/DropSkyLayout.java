@@ -3,6 +3,7 @@ package br.com.madeinlabs.dropsky;
 import android.animation.Animator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.widget.RelativeLayout;
 
@@ -18,6 +19,8 @@ public class DropSkyLayout extends RelativeLayout {
 
     public void setAdapter(DropSkyAdapter adapter) {
         this.mAdapter = adapter;
+        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        layoutParams.height = mAdapter.getTotalHeight();
     }
 
     public void drop(long duration) {
@@ -36,6 +39,8 @@ public class DropSkyLayout extends RelativeLayout {
         if(mNextViewIndex >= 0) {
             final DropSkyItem dropSkyItem = mAdapter.getDropSkyItem(mNextViewIndex);
             addView(dropSkyItem);
+            ViewGroup.LayoutParams layoutParams = dropSkyItem.getLayoutParams();
+            layoutParams.height = mAdapter.getTotalHeight();
 
             //start item on the top of the view
             dropSkyItem.setTranslationY(-getHeight());
