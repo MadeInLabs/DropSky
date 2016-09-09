@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 public class DropSkyItem extends RelativeLayout{
-    private View mView;
+    public View mView;
 
     public DropSkyItem(Context context) {
         super(context);

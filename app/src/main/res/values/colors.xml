@@ -9,6 +9,10 @@
     <color name="three">#c06c84</color>
     <color name="four">#6c5b7b</color>
     <color name="five">#355c7d</color>
+    <color name="six">#2196f3</color>
+    <color name="seven">#673ab7</color>
+    <color name="eight">#009688</color>
+
     <color name="white">#ffffff</color>
 
 </resources>

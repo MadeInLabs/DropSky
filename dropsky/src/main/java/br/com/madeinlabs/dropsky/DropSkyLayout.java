@@ -2,7 +2,6 @@ package br.com.madeinlabs.dropsky;
 
 import android.animation.Animator;
 import android.content.Context;
-import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.view.ViewPropertyAnimator;
 import android.widget.RelativeLayout;
@@ -22,15 +21,20 @@ public class DropSkyLayout extends RelativeLayout {
     }
 
     public void drop(long duration) {
+        if(getChildCount() > 0) {
+            removeAllViews();
+        }
+
         mNextViewIndex = mAdapter.getCount() - 1;
         mDropDuration = duration;
         mGround = 0;
+
         dropItem();
     }
 
     private void dropItem() {
         if(mNextViewIndex >= 0) {
-            final DropSkyItem dropSkyItem = mAdapter.getItem(mNextViewIndex);
+            final DropSkyItem dropSkyItem = mAdapter.getDropSkyItem(mNextViewIndex);
             addView(dropSkyItem);
 
             //start item on the top of the view

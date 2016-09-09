@@ -2,7 +2,7 @@
 <com.balysv.materialripple.MaterialRippleLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:mrl_rippleOverlay="true"
-    app:mrl_rippleColor="#55ffffff"
+    app:mrl_rippleColor="#55000000"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:gravity="center"
         android:layout_gravity="center"
-        android:layout_height="120dp">
+        android:layout_height="100dp">
 
         <ImageView android:id="@+id/img_icon"
             android:src="@drawable/pikachu"
