@@ -10,6 +10,7 @@ public class DropSkyItem extends RelativeLayout{
     private RelativeLayout mRoot;
     public RelativeLayout mViewContainer;
     public View mViewItem;
+    private int mColor;
 
     public DropSkyItem(Context context) {
         super(context);
@@ -34,6 +35,11 @@ public class DropSkyItem extends RelativeLayout{
     }
 
     public void setColor(int color) {
+        mColor = color;
         setBackgroundColor(color);
+    }
+
+    public int getColor() {
+        return mColor;
     }
 }

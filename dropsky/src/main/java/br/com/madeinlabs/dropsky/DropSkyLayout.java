@@ -100,6 +100,10 @@ public class DropSkyLayout extends RelativeLayout {
         this.mListener = listener;
     }
 
+    public void fly(int flyDuration) {
+        animate().setDuration(flyDuration).translationY(- mAdapter.getTotalHeight());
+    }
+
     public interface DropSkyListener {
         void onItemDropEnd(View view, int index);
         void onItemDropStart(View view, int index);

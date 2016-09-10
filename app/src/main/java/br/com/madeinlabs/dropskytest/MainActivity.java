@@ -1,13 +1,17 @@
 package br.com.madeinlabs.dropskytest;
 
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewPropertyAnimator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
@@ -20,11 +24,13 @@ import br.com.madeinlabs.dropsky.DropSkyLayout;
 public class MainActivity extends AppCompatActivity {
 
     private DropSkyLayout mDropSkyLayout;
+    private RelativeLayout mRoot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mRoot = (RelativeLayout) findViewById(R.id.layout_root);
         mDropSkyLayout = (DropSkyLayout) findViewById(R.id.drop_sky);
 
         mDropSkyLayout.setListener(new DropSkyLayout.DropSkyListener() {
@@ -61,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                         refreshDropSkyWithoutAnimation();
                         break;
                     case 2:
-                        addOneMoreItem(dropSkyItem);
+                        addOneMoreItem(dropSkyItem, index);
                         break;
                     default:
                         Toast.makeText(MainActivity.this, "Option not available", Toast.LENGTH_SHORT).show();
@@ -71,8 +77,9 @@ public class MainActivity extends AppCompatActivity {
         mDropSkyLayout.setAdapter(adapter);
     }
 
-    private void addOneMoreItem(DropSkyItem dropSkyItem) {
-
+    private void addOneMoreItem(DropSkyItem dropSkyItem, int index) {
+        mRoot.setBackgroundColor(dropSkyItem.getColor());
+        mDropSkyLayout.fly(1500);
     }
 
     private void refreshDropSkyWithoutAnimation() {
