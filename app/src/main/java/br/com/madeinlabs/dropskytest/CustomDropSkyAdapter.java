@@ -1,7 +1,6 @@
 package br.com.madeinlabs.dropskytest;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -24,7 +23,6 @@ public class CustomDropSkyAdapter extends DropSkyAdapter {
         MaterialRippleLayout materialRippleLayout = (MaterialRippleLayout) layoutInflater.inflate(R.layout.view_menu_item, null, false);
 
         RelativeLayout layoutRoot = (RelativeLayout) materialRippleLayout.findViewById(R.id.layout_root);
-        layoutRoot.setBackgroundColor(ContextCompat.getColor(mContext, colorResource));
 
         ImageView imgIcon = (ImageView) layoutRoot.findViewById(R.id.img_icon);
         imgIcon.setImageResource(iconResource);

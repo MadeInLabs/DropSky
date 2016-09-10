@@ -25,6 +25,17 @@ public class DropSkyLayout extends RelativeLayout {
         layoutParams.height = mAdapter.getTotalHeight();
     }
 
+    /**
+     * This method show the child without animation
+     */
+    public void drop() {
+        drop(0);
+    }
+
+    /**
+     * This method show the child with animation
+     * @param duration the duration of the animation
+     */
     public void drop(long duration) {
         if(getChildCount() > 0) {
             removeAllViews();
@@ -44,6 +55,7 @@ public class DropSkyLayout extends RelativeLayout {
             ViewGroup.LayoutParams layoutParams = dropSkyItem.getLayoutParams();
             layoutParams.height = mAdapter.getTotalHeight();
 
+
             //start item on the top of the view
             dropSkyItem.setTranslationY(-getHeight());
             //translate the item until the top of the other view, the current "ground"
@@ -55,14 +67,14 @@ public class DropSkyLayout extends RelativeLayout {
                 @Override
                 public void onAnimationStart(Animator animator) {
                     if(mListener != null) {
-                        mListener.onItemAnimationStart(dropSkyItem.mViewContainer, mNextViewIndex + 1);
+                        mListener.onItemDropStart(dropSkyItem.mViewContainer, mNextViewIndex + 1);
                     }
                 }
 
                 @Override
                 public void onAnimationEnd(Animator animator) {
                     if(mListener != null) {
-                        mListener.onItemAnimationEnd(dropSkyItem.mViewContainer, mNextViewIndex + 1);
+                        mListener.onItemDropEnd(dropSkyItem.mViewContainer, mNextViewIndex + 1);
                     }
                     //update the Ground
                     mGround -= dropSkyItem.getTrueHeight();
@@ -89,8 +101,8 @@ public class DropSkyLayout extends RelativeLayout {
     }
 
     public interface DropSkyListener {
-        void onItemAnimationEnd(View view, int index);
-        void onItemAnimationStart(View view, int index);
+        void onItemDropEnd(View view, int index);
+        void onItemDropStart(View view, int index);
         void onDropEnd();
     }
 }

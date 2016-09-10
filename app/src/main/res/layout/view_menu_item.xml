@@ -8,7 +8,7 @@
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/layout_root"
-        android:background="@color/one"
+        android:background="@color/transparent"
         android:layout_width="match_parent"
         android:gravity="center"
         android:layout_gravity="center"

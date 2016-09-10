@@ -1,5 +1,6 @@
 package br.com.madeinlabs.dropskytest;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -28,12 +29,12 @@ public class MainActivity extends AppCompatActivity {
 
         mDropSkyLayout.setListener(new DropSkyLayout.DropSkyListener() {
             @Override
-            public void onItemAnimationEnd(View view, int index) {
+            public void onItemDropEnd(View view, int index) {
                 YoYo.with(Techniques.Wave).duration(200).interpolate(new DecelerateInterpolator()).playOn(view);
             }
 
             @Override
-            public void onItemAnimationStart(View view, int index) {
+            public void onItemDropStart(View view, int index) {
                 YoYo.with(Techniques.Swing).duration(200).interpolate(new DecelerateInterpolator()).playOn(view);
             }
 
@@ -44,27 +45,48 @@ public class MainActivity extends AppCompatActivity {
         });
 
         CustomDropSkyAdapter adapter = new CustomDropSkyAdapter(this);
-        adapter.addItem(R.drawable.pikachu, "Pokémons", R.color.one);
-        adapter.addItem(R.drawable.insignia, "Insignias", R.color.two);
-        adapter.addItem(R.drawable.pokeball, "Items", R.color.three);
+        adapter.addItem(R.drawable.pikachu, "Refresh with Drop", R.color.one);
+        adapter.addItem(R.drawable.insignia, "Refresh without Drop", R.color.two);
+        adapter.addItem(R.drawable.pokeball, "Add one more item", R.color.three);
         adapter.addItem(R.drawable.egg_incubator, "Incubators", R.color.four);
         adapter.addItem(R.drawable.razz_berry, "Razz berries", R.color.five);
-        adapter.addItem(R.drawable.psyduck, "Psyduck", R.color.six);
-        adapter.addItem(R.drawable.gotcha, "Gotcha", R.color.seven);
-        adapter.addItem(R.drawable.pokedex, "Pokedex", R.color.eight);
         adapter.setOnItemClickListener(new DropSkyAdapter.Listener() {
             @Override
             public void onItemClicked(DropSkyItem dropSkyItem, int index) {
-                Toast.makeText(MainActivity.this, "Item at " + index + " clicked", Toast.LENGTH_SHORT).show();
+                switch (index) {
+                    case 0:
+                        animateDropSky();
+                        break;
+                    case 1:
+                        refreshDropSkyWithoutAnimation();
+                        break;
+                    case 2:
+                        addOneMoreItem(dropSkyItem);
+                        break;
+                    default:
+                        Toast.makeText(MainActivity.this, "Option not available", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         mDropSkyLayout.setAdapter(adapter);
     }
 
+    private void addOneMoreItem(DropSkyItem dropSkyItem) {
+
+    }
+
+    private void refreshDropSkyWithoutAnimation() {
+        mDropSkyLayout.drop();
+    }
+
+    private void animateDropSky() {
+        mDropSkyLayout.drop(3000);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        mDropSkyLayout.drop(3000);
+        refreshDropSkyWithoutAnimation();
     }
 
     @Override
@@ -79,7 +101,8 @@ public class MainActivity extends AppCompatActivity {
         int itemId = item.getItemId();
         switch (itemId) {
             case R.id.action_refresh:
-                mDropSkyLayout.drop(3000);
+                animateDropSky();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

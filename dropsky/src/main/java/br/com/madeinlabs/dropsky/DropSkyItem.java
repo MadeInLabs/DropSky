@@ -7,25 +7,33 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 public class DropSkyItem extends RelativeLayout{
+    private RelativeLayout mRoot;
     public RelativeLayout mViewContainer;
     public View mViewItem;
 
     public DropSkyItem(Context context) {
         super(context);
+        mRoot = (RelativeLayout) inflate(context, R.layout.view_drop_sky_item, this);
+        mViewContainer = (RelativeLayout) mRoot.findViewById(R.id.layout_true_item);
     }
 
     public DropSkyItem(Context context, View view, int colorResource) {
         this(context);
-        RelativeLayout root = (RelativeLayout) inflate(context, R.layout.view_drop_sky_item, this);
-        setBackgroundColor(ContextCompat.getColor(context, colorResource));
+        setColor(ContextCompat.getColor(context, colorResource));
+        addView(view);
+    }
 
-        mViewContainer = (RelativeLayout) root.findViewById(R.id.layout_true_item);
-        mViewContainer.addView(view, LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        mViewItem = view;
+    @Override
+    public void addView(View child) {
+        mViewContainer.addView(child, LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mViewItem = child;
     }
 
     public int getTrueHeight() {
         return mViewItem.getHeight();
+    }
+
+    public void setColor(int color) {
+        setBackgroundColor(color);
     }
 }
