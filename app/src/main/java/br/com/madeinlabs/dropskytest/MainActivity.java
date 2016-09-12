@@ -1,15 +1,12 @@
 package br.com.madeinlabs.dropskytest;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewPropertyAnimator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -56,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
         adapter.addItem(R.drawable.pokeball, "Add one more item", R.color.three);
         adapter.addItem(R.drawable.egg_incubator, "Incubators", R.color.four);
         adapter.addItem(R.drawable.razz_berry, "Razz berries", R.color.five);
+        adapter.addItem(R.drawable.psyduck, "Psyduck", R.color.six);
+        adapter.addItem(R.drawable.pokedex, "Pokedex", R.color.seven);
+        adapter.addItem(R.drawable.gotcha, "Gotcha", R.color.eight);
         adapter.setOnItemClickListener(new DropSkyAdapter.Listener() {
             @Override
             public void onItemClicked(DropSkyItem dropSkyItem, int index) {
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                         refreshDropSkyWithoutAnimation();
                         break;
                     case 2:
-                        addOneMoreItem(dropSkyItem, index);
+                        addOneMoreItem(dropSkyItem);
                         break;
                     default:
                         Toast.makeText(MainActivity.this, "Option not available", Toast.LENGTH_SHORT).show();
@@ -77,9 +77,15 @@ public class MainActivity extends AppCompatActivity {
         mDropSkyLayout.setAdapter(adapter);
     }
 
-    private void addOneMoreItem(DropSkyItem dropSkyItem, int index) {
+    private void addOneMoreItem(DropSkyItem dropSkyItem) {
         mRoot.setBackgroundColor(dropSkyItem.getColor());
-        mDropSkyLayout.fly(1500);
+        mDropSkyLayout.fly(1000);
+
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     private void refreshDropSkyWithoutAnimation() {
@@ -87,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void animateDropSky() {
-        mDropSkyLayout.drop(3000);
+        mDropSkyLayout.drop(2000);
     }
 
     @Override
@@ -107,6 +113,14 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
         switch (itemId) {
+            case android.R.id.home:
+                ActionBar actionBar = getSupportActionBar();
+                if(actionBar != null) {
+                    actionBar.setHomeButtonEnabled(false);
+                    actionBar.setDisplayHomeAsUpEnabled(false);
+                }
+                animateDropSky();
+                break;
             case R.id.action_refresh:
                 animateDropSky();
                 break;

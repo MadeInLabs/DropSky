@@ -37,6 +37,7 @@ public class DropSkyLayout extends RelativeLayout {
      * @param duration the duration of the animation
      */
     public void drop(long duration) {
+        setTranslationY(0);
         if(getChildCount() > 0) {
             removeAllViews();
         }
@@ -48,6 +49,9 @@ public class DropSkyLayout extends RelativeLayout {
         dropItem();
     }
 
+    /**
+    This method drop the next item on the stack of items of the adapter
+     */
     private void dropItem() {
         if(mNextViewIndex >= 0) {
             final DropSkyItem dropSkyItem = mAdapter.getDropSkyItem(mNextViewIndex);
@@ -100,13 +104,30 @@ public class DropSkyLayout extends RelativeLayout {
         this.mListener = listener;
     }
 
+    /**
+    The layout move to top of the screen until it disappear
+     @param flyDuration is the duration of the animation
+     */
     public void fly(int flyDuration) {
         animate().setDuration(flyDuration).translationY(- mAdapter.getTotalHeight());
     }
 
     public interface DropSkyListener {
+        /**
+         * It's called when each item finishes of been animated
+         * @param view is the item that was animated
+         * @param index is the index of the item that was animated
+         */
         void onItemDropEnd(View view, int index);
+        /**
+         * It's called when each item starts of been animated
+         * @param view is the item animated
+         * @param index is the index of the item animated
+         */
         void onItemDropStart(View view, int index);
+        /**
+         * It's called when all the items were animated
+         */
         void onDropEnd();
     }
 }
