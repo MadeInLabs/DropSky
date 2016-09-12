@@ -18,9 +18,9 @@ public class DropSkyItem extends RelativeLayout{
         mViewContainer = (RelativeLayout) mRoot.findViewById(R.id.layout_true_item);
     }
 
-    public DropSkyItem(Context context, View view, int colorResource) {
+    public DropSkyItem(Context context, View view, int color) {
         this(context);
-        setColor(ContextCompat.getColor(context, colorResource));
+        setColor(color);
         addView(view);
     }
 

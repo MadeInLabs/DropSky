@@ -1,6 +1,7 @@
 package br.com.madeinlabs.dropskytest;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -30,6 +31,6 @@ public class CustomDropSkyAdapter extends DropSkyAdapter {
         TextView txTitle = (TextView) layoutRoot.findViewById(R.id.txt_title);
         txTitle.setText(title);
 
-        addViewItem(materialRippleLayout, colorResource);
+        addViewItem(materialRippleLayout, ContextCompat.getColor(mContext, colorResource));
     }
 }
