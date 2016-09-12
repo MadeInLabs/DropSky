@@ -1,4 +1,72 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+def artifact = new Properties()
+artifact.load(new FileInputStream("dropsky/deploy.settings"))
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                groupId artifact.groupId
+                artifactId artifact.id
+
+                name artifact.id
+                description 'Android menu layout that items enter with a drop animation.' // YOUR LIBRARY DESCRIPTION
+                url artifact.siteUrl // YOUR SITE
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'luisfelipeas5' //YOUR ID
+                        name 'Luis Felipe de Almeida da Silva' //YOUR NAME
+                        email 'luisfelipeas5@gmail.com' //YOUR EMAIL
+                    }
+                }
+                scm {
+                    connection artifact.gitUrl // YOUR GIT REPO
+                    developerConnection artifact.gitUrl // YOUR GIT REPO
+                    url artifact.siteUrl // YOUR SITE
+
+                }
+            }
+        }
+    }
+}
+
+version=artifact.version
+group=artifact.groupId
+
+Properties properties = new Properties()
+File propFile = "${System.properties['user.home']}${File.separator}.gradle${File.separator}bintray.properties" as File
+properties.load(propFile.newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = 'madeinlabs'
+        name = 'dropsky'
+        desc = 'Android menu layout that items enter with a drop animation.'
+        websiteUrl = 'https://github.com/MadeInLabs/DropSky'
+        vcsUrl = 'https://github.com/MadeInLabs/DropSky.git'
+        licenses = ['Apache-2.0']
+        publish = true
+        publicDownloadNumbers = true
+        version {
+            name = artifact.version
+        }
+    }
+}
 
 android {
     compileSdkVersion 24
@@ -8,7 +76,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
     }
     buildTypes {
         release {

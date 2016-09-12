@@ -1,0 +1,7 @@
+siteUrl = https://github.com/MadeInLabs/DropSky
+gitUrl = https://github.com/MadeInLabs/DropSky.git 
+version = 1.0.0
+groupId = com.github.madeinlabs
+licenses = ["Apache-2.0"] // or something else 
+id = dropsky
+name = dropsky // actually not used
