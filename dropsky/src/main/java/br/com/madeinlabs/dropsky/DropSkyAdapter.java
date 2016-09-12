@@ -1,6 +1,7 @@
 package br.com.madeinlabs.dropsky;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import java.util.LinkedList;
@@ -29,8 +30,8 @@ public class DropSkyAdapter {
         return mDropSkyItems.get(index);
     }
 
-    public void addViewItem(View view, int colorResource) {
-        final DropSkyItem dropSkyItem = new DropSkyItem(mContext, view, colorResource);
+    public void addViewItem(View view, int color) {
+        final DropSkyItem dropSkyItem = new DropSkyItem(mContext, view, color);
 
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         totalHeight += view.getMeasuredHeight();
