@@ -11,14 +11,21 @@ import android.widget.RelativeLayout;
 public class DropSkyLayout extends RelativeLayout {
     private DropSkyAdapter mAdapter;
     private int mNextViewIndex;
-    private float mGround;
     private long mDropDuration;
     private DropSkyListener mListener;
+    private boolean isShowing;
 
     public DropSkyLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mListener = new EmptyDropSkyListener();
+        isShowing = false;
     }
 
+    /**
+     * Set the adapter to this DropSkyLayout.
+     * @param adapter adds the items to DropSkyLayout and decides if the animation goes: top-down or
+     *                bottom-up.
+     */
     public void setAdapter(DropSkyAdapter adapter) {
         this.mAdapter = adapter;
         ViewGroup.LayoutParams layoutParams = getLayoutParams();
@@ -26,90 +33,150 @@ public class DropSkyLayout extends RelativeLayout {
     }
 
     /**
-     * This method show the child without animation
+     The DropSkyLayout hide yourself with animation
+     @param hideDuration is the duration of animation
      */
-    public void drop() {
-        drop(0);
-    }
-
-    /**
-     * This method show the child with animation
-     * @param duration the duration of the animation
-     */
-    public void drop(long duration) {
-        setTranslationY(0);
-        if(getChildCount() > 0) {
-            removeAllViews();
+    public void hide(int hideDuration) {
+        int translateYValue = -mAdapter.getTotalHeight();
+        boolean reverse = mAdapter.isReverse();
+        if (reverse) {
+            translateYValue = -translateYValue;
         }
 
-        mNextViewIndex = mAdapter.getCount() - 1;
-        mDropDuration = duration;
-        mGround = 0;
-
-        dropItem();
+        if(hideDuration > 0) {
+            animate().setDuration(hideDuration).translationY(translateYValue);
+        } else {
+            setTranslationY(translateYValue);
+        }
     }
 
     /**
-    This method drop the next item on the stack of items of the adapter
+     The DropSkyLayout hide yourself without animation
      */
-    private void dropItem() {
-        if(mNextViewIndex >= 0) {
+    public void hide() {
+        hide(0);
+    }
+
+    /**
+     * The DropSkyLayout show its items without animation
+     */
+    public void show() {
+        show(0);
+    }
+
+    /**
+     * The DropSkyLayout show its items with animation
+     * @param duration the duration of animation
+     */
+    public void show(long duration) {
+        if(!isShowing) {
+            isShowing = true;
+            setTranslationY(0);
+            if (getChildCount() > 0) {
+                removeAllViews();
+            }
+
+            boolean reverse = mAdapter.isReverse();
+            if (reverse) {
+                mNextViewIndex = 0;
+            } else {
+                mNextViewIndex = mAdapter.getCount() - 1;
+            }
+            mDropDuration = duration;
+
+            showItem();
+        }
+    }
+
+    /**
+     *Shows next item on the adapter's order
+     */
+    private void showItem() {
+        if(mNextViewIndex >= 0 && mNextViewIndex < mAdapter.getCount()) {
+            int itemY = mAdapter.getItemY(mNextViewIndex);
             final DropSkyItem dropSkyItem = mAdapter.getDropSkyItem(mNextViewIndex);
+
             addView(dropSkyItem);
             ViewGroup.LayoutParams layoutParams = dropSkyItem.getLayoutParams();
             layoutParams.height = mAdapter.getTotalHeight();
 
+            int initialY;
+            if (mAdapter.isReverse()) {
+                if (mDropDuration > 0) {
+                    initialY = getHeight();
+                } else {
+                    initialY = itemY;
+                }
+            } else {
+                if (mDropDuration > 0) {
+                    initialY = -getHeight();
+                } else {
+                    int trueHeight = mAdapter.getTrueHeight(mNextViewIndex);
+                    initialY = - mAdapter.getTotalHeight() + itemY + trueHeight;
+                }
+            }
 
             //start item on the top of the view
-            dropSkyItem.setTranslationY(-getHeight());
-            //translate the item until the top of the other view, the current "ground"
-            long currentDropDuration = mDropDuration/mAdapter.getCount();
-            ViewPropertyAnimator animator = dropSkyItem.animate().translationY(mGround).setDuration(currentDropDuration);
-
-            mNextViewIndex--;
-            animator.setListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animator) {
-                    if(mListener != null) {
-                        mListener.onItemDropStart(dropSkyItem.mViewContainer, mNextViewIndex + 1);
+            dropSkyItem.setTranslationY(initialY);
+            if(mDropDuration == 0) {
+                onStartShowingItem(dropSkyItem);
+                onEndShowingItem(dropSkyItem);
+            } else {
+                int translationYByValue;
+                if (mAdapter.isReverse()) {
+                    translationYByValue = -mAdapter.getTotalHeight() + itemY;
+                } else {
+                    translationYByValue = mAdapter.getTotalHeight() - mAdapter.getItemY(mAdapter.getCount() - mNextViewIndex - 1);
+                }
+                //translate the item until the top of the other view, the current "ground"
+                long currentDropDuration = mDropDuration/mAdapter.getCount();
+                ViewPropertyAnimator animator = dropSkyItem.animate().translationYBy(translationYByValue).setDuration(currentDropDuration);
+                animator.setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animator) {
+                        onStartShowingItem(dropSkyItem);
                     }
-                }
 
-                @Override
-                public void onAnimationEnd(Animator animator) {
-                    if(mListener != null) {
-                        mListener.onItemDropEnd(dropSkyItem.mViewContainer, mNextViewIndex + 1);
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        onEndShowingItem(dropSkyItem);
                     }
-                    //update the Ground
-                    mGround -= dropSkyItem.getTrueHeight();
-                    dropItem();
-                }
 
-                @Override
-                public void onAnimationCancel(Animator animator) {
-                }
+                    @Override
+                    public void onAnimationCancel(Animator animator) {
+                    }
 
-                @Override
-                public void onAnimationRepeat(Animator animator) {
-                }
-            });
-        } else {
-            if (mListener != null) {
-                mListener.onDropEnd();
+                    @Override
+                    public void onAnimationRepeat(Animator animator) {
+                    }
+                });
             }
+        } else {
+            mListener.onDropEnd();
+            isShowing = false;
         }
     }
 
-    public void setListener(DropSkyListener listener) {
-        this.mListener = listener;
+    private void onStartShowingItem(DropSkyItem dropSkyItem) {
+        mListener.onItemDropStart(dropSkyItem.mViewContainer, mNextViewIndex + 1);
     }
 
-    /**
-    The layout move to top of the screen until it disappear
-     @param flyDuration is the duration of the animation
-     */
-    public void fly(int flyDuration) {
-        animate().setDuration(flyDuration).translationY(- mAdapter.getTotalHeight());
+    private void onEndShowingItem(DropSkyItem dropSkyItem) {
+        if(mAdapter.isReverse()) {
+            mNextViewIndex++;
+        } else {
+            mNextViewIndex--;
+        }
+        mListener.onItemDropEnd(dropSkyItem.mViewContainer, mNextViewIndex + 1);
+        showItem();
+    }
+
+    public void setListener(DropSkyListener listener) {
+        if(listener != null) {
+            mListener = listener;
+        } else {
+            mListener = new EmptyDropSkyListener();
+        }
     }
 
     public interface DropSkyListener {
@@ -129,5 +196,17 @@ public class DropSkyLayout extends RelativeLayout {
          * It's called when all the items were animated
          */
         void onDropEnd();
+    }
+
+    private class EmptyDropSkyListener implements DropSkyListener {
+        @Override
+        public void onItemDropEnd(View view, int index) {
+        }
+        @Override
+        public void onItemDropStart(View view, int index) {
+        }
+        @Override
+        public void onDropEnd() {
+        }
     }
 }

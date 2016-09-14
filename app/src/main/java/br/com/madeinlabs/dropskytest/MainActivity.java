@@ -46,13 +46,15 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "The base was dropped", Toast.LENGTH_SHORT).show();
             }
         });
+    }
 
-        CustomDropSkyAdapter adapter = new CustomDropSkyAdapter(this);
-        adapter.addItem(R.drawable.pikachu, "Refresh with Drop", R.color.one);
-        adapter.addItem(R.drawable.insignia, "Refresh without Drop", R.color.two);
-        adapter.addItem(R.drawable.pokeball, "Add one more item", R.color.three);
-        adapter.addItem(R.drawable.egg_incubator, "Incubators", R.color.four);
-        adapter.addItem(R.drawable.razz_berry, "Razz berries", R.color.five);
+    private void setUpAdapter(boolean reverseMode) {
+        CustomDropSkyAdapter adapter = new CustomDropSkyAdapter(this, reverseMode);
+        adapter.addItem(R.drawable.pikachu, "Show", R.color.one);
+        adapter.addItem(R.drawable.insignia, "Hide", R.color.two);
+        adapter.addItem(R.drawable.pokeball, "Refresh", R.color.three);
+        adapter.addItem(R.drawable.egg_incubator, "Turn On Normal Mode", R.color.four);
+        adapter.addItem(R.drawable.razz_berry, "Turn On Reverse Mode", R.color.five);
         adapter.addItem(R.drawable.psyduck, "Psyduck", R.color.six);
         adapter.addItem(R.drawable.pokedex, "Pokedex", R.color.seven);
         adapter.addItem(R.drawable.gotcha, "Gotcha", R.color.eight);
@@ -61,13 +63,19 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClicked(DropSkyItem dropSkyItem, int index) {
                 switch (index) {
                     case 0:
-                        animateDropSky();
+                        show();
                         break;
                     case 1:
-                        refreshDropSkyWithoutAnimation();
+                        hide(dropSkyItem);
                         break;
                     case 2:
-                        addOneMoreItem(dropSkyItem);
+                        refreshDropSkyWithoutAnimation();
+                        break;
+                    case 3:
+                        setUpAdapter(false);
+                        break;
+                    case 4:
+                        setUpAdapter(true);
                         break;
                     default:
                         Toast.makeText(MainActivity.this, "Option not available", Toast.LENGTH_SHORT).show();
@@ -77,10 +85,20 @@ public class MainActivity extends AppCompatActivity {
         mDropSkyLayout.setAdapter(adapter);
     }
 
-    private void addOneMoreItem(DropSkyItem dropSkyItem) {
-        mRoot.setBackgroundColor(dropSkyItem.getColor());
-        mDropSkyLayout.fly(1000);
+    private void refreshDropSkyWithoutAnimation() {
+        mDropSkyLayout.show();
+    }
 
+    private void show() {
+        mDropSkyLayout.show(2000);
+    }
+
+    private void hide(DropSkyItem dropSkyItem) {
+        mDropSkyLayout.hide(2000);
+        mRoot.setBackgroundColor(dropSkyItem.getColor());
+        mDropSkyLayout.setBackgroundColor(dropSkyItem.getColor());
+
+        mDropSkyLayout.hide(1000);
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
@@ -88,25 +106,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void refreshDropSkyWithoutAnimation() {
-        mDropSkyLayout.drop();
-    }
-
-    private void animateDropSky() {
-        mDropSkyLayout.drop(2000);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
+        setUpAdapter(true);
         refreshDropSkyWithoutAnimation();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_main, menu);
-        return true;
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setHomeButtonEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(false);
+        }
     }
 
     @Override
@@ -119,10 +128,7 @@ public class MainActivity extends AppCompatActivity {
                     actionBar.setHomeButtonEnabled(false);
                     actionBar.setDisplayHomeAsUpEnabled(false);
                 }
-                animateDropSky();
-                break;
-            case R.id.action_refresh:
-                animateDropSky();
+                show();
                 break;
         }
         return super.onOptionsItemSelected(item);

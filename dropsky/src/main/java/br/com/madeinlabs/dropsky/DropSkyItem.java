@@ -14,12 +14,20 @@ public class DropSkyItem extends RelativeLayout{
 
     public DropSkyItem(Context context) {
         super(context);
-        mRoot = (RelativeLayout) inflate(context, R.layout.view_drop_sky_item, this);
+    }
+
+    public DropSkyItem(Context context, boolean reverse) {
+        this(context);
+        if(reverse) {
+            mRoot = (RelativeLayout) inflate(context, R.layout.view_drop_sky_reverse_item, this);
+        } else {
+            mRoot = (RelativeLayout) inflate(context, R.layout.view_drop_sky_item, this);
+        }
         mViewContainer = (RelativeLayout) mRoot.findViewById(R.id.layout_true_item);
     }
 
-    public DropSkyItem(Context context, View view, int color) {
-        this(context);
+    public DropSkyItem(Context context, View view, int color, boolean reverse) {
+        this(context, reverse);
         setColor(color);
         addView(view);
     }
@@ -28,10 +36,6 @@ public class DropSkyItem extends RelativeLayout{
     public void addView(View child) {
         mViewContainer.addView(child, LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         mViewItem = child;
-    }
-
-    public int getTrueHeight() {
-        return mViewItem.getHeight();
     }
 
     public void setColor(int color) {

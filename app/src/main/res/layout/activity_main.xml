@@ -6,13 +6,11 @@
     android:layout_height="match_parent"
     tools:context="br.com.madeinlabs.dropskytest.MainActivity">
 
-
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <br.com.madeinlabs.dropsky.DropSkyLayout android:id="@+id/drop_sky"
-            android:background="@color/colorAccent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

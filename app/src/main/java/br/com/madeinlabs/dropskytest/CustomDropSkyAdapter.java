@@ -14,8 +14,8 @@ import br.com.madeinlabs.dropsky.DropSkyAdapter;
 public class CustomDropSkyAdapter extends DropSkyAdapter {
     private Context mContext;
 
-    public CustomDropSkyAdapter(Context context) {
-        super(context);
+    public CustomDropSkyAdapter(Context context, boolean reverse) {
+        super(context, reverse);
         mContext = context;
     }
 

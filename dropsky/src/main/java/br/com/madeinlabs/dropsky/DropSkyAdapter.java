@@ -1,7 +1,6 @@
 package br.com.madeinlabs.dropsky;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import java.util.LinkedList;
@@ -10,8 +9,13 @@ import java.util.List;
 public class DropSkyAdapter {
     private final Context mContext;
     private List<DropSkyItem> mDropSkyItems;
-    private int totalHeight;
     private Listener mListener;
+    private boolean mReverse;
+    private List<Integer> mHeights;
+
+    public boolean isReverse() {
+        return mReverse;
+    }
 
     public interface Listener {
         void onItemClicked(DropSkyItem dropSkyItem, int index);
@@ -19,7 +23,13 @@ public class DropSkyAdapter {
 
     public DropSkyAdapter(Context context) {
         mDropSkyItems = new LinkedList<>();
+        mHeights = new LinkedList<>();
         mContext = context;
+    }
+
+    public DropSkyAdapter(Context context, boolean reverseMode) {
+        this(context);
+        mReverse = reverseMode;
     }
 
     public int getCount() {
@@ -31,10 +41,10 @@ public class DropSkyAdapter {
     }
 
     public void addViewItem(View view, int color) {
-        final DropSkyItem dropSkyItem = new DropSkyItem(mContext, view, color);
+        final DropSkyItem dropSkyItem = new DropSkyItem(mContext, view, color, mReverse);
 
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        totalHeight += view.getMeasuredHeight();
+        mHeights.add(view.getMeasuredHeight());
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,10 +58,26 @@ public class DropSkyAdapter {
     }
 
     public int getTotalHeight() {
+        int totalHeight = 0;
+        for (int height : mHeights) {
+            totalHeight += height;
+        }
         return totalHeight;
+    }
+
+    public int getItemY(int index) {
+        int y = 0;
+        for(int i = 0; i < index; i++) {
+            y += mHeights.get(i);
+        }
+        return y;
     }
 
     public void setOnItemClickListener(Listener onItemClickListener) {
         this.mListener = onItemClickListener;
+    }
+
+    public int getTrueHeight(int index) {
+        return mHeights.get(index);
     }
 }
