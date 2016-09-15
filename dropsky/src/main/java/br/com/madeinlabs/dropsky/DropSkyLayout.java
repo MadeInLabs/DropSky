@@ -194,6 +194,10 @@ public class DropSkyLayout extends RelativeLayout {
         }
     }
 
+    public DropSkyAdapter getAdapter() {
+        return mAdapter;
+    }
+
     public interface DropSkyListener {
         /**
          * It's called when each item finishes of been animated

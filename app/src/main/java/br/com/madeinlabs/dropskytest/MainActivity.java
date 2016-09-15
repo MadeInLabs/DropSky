@@ -1,12 +1,16 @@
 package br.com.madeinlabs.dropskytest;
 
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
@@ -19,13 +23,17 @@ import br.com.madeinlabs.dropsky.DropSkyLayout;
 public class MainActivity extends AppCompatActivity {
 
     private DropSkyLayout mDropSkyLayout;
-    private RelativeLayout mRoot;
+    private CoordinatorLayout mRoot;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mRoot = (RelativeLayout) findViewById(R.id.layout_root);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+
+        mRoot = (CoordinatorLayout) findViewById(R.id.layout_root);
         mDropSkyLayout = (DropSkyLayout) findViewById(R.id.drop_sky);
 
         mDropSkyLayout.setListener(new DropSkyLayout.DropSkyListener() {
@@ -45,8 +53,40 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpAdapter(false);
+        refreshDropSkyWithoutAnimation();
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setHomeButtonEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(false);
+        }
+    }
+
     private void setUpAdapter(boolean reverseMode) {
-        CustomDropSkyAdapter adapter = new CustomDropSkyAdapter(this, reverseMode);
+        CustomDropSkyAdapter adapter = (CustomDropSkyAdapter) mDropSkyLayout.getAdapter();
+        if (adapter != null) {
+            if (adapter.isReverse() == !reverseMode && !adapter.isReverse() == reverseMode) {
+                TransitionDrawable transitionDrawable = (TransitionDrawable) mToolbar.getBackground();
+                if (!reverseMode) {
+                    transitionDrawable.reverseTransition(500);
+                } else {
+                    transitionDrawable.startTransition(500);
+                }
+            }
+        }
+
+        String mode;
+        if (reverseMode) {
+            mode = getString(R.string.reverse);
+        } else {
+            mode = getString(R.string.normal);
+        }
+        setTitle(getString(R.string.drop_sky_mode, mode));
+
+        adapter = new CustomDropSkyAdapter(this, reverseMode);
         adapter.addItem(R.drawable.pikachu, "Show", R.color.one);
         adapter.addItem(R.drawable.insignia, "Hide", R.color.two);
         adapter.addItem(R.drawable.pokeball, "Refresh", R.color.three);
@@ -101,18 +141,6 @@ public class MainActivity extends AppCompatActivity {
                 actionBar.setHomeButtonEnabled(true);
                 actionBar.setDisplayHomeAsUpEnabled(true);
             }
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setUpAdapter(true);
-        refreshDropSkyWithoutAnimation();
-        ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setHomeButtonEnabled(false);
-            actionBar.setDisplayHomeAsUpEnabled(false);
         }
     }
 

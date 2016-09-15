@@ -2,4 +2,7 @@
     <string name="app_name">DropSkyTest</string>
     <string name="icon">icon</string>
     <string name="refresh">refresh</string>
+    <string name="reverse">Reverse</string>
+    <string name="drop_sky_mode">DropSky Mode: %s</string>
+    <string name="normal">Normal</string>
 </resources>
