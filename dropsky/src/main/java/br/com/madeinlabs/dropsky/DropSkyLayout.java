@@ -114,45 +114,38 @@ public class DropSkyLayout extends RelativeLayout {
      *Shows next item on the adapter's order
      */
     private void showItem() {
-        if(mNextViewIndex >= 0 && mNextViewIndex < mAdapter.getCount()) {
-            int itemY = mAdapter.getItemY(mNextViewIndex);
+        int countTotalItems = mAdapter.getCount();
+        if(mNextViewIndex >= 0 && mNextViewIndex < countTotalItems) {
             final DropSkyItem dropSkyItem = mAdapter.getDropSkyItem(mNextViewIndex);
-
             addView(dropSkyItem);
             ViewGroup.LayoutParams layoutParams = dropSkyItem.getLayoutParams();
             layoutParams.height = mAdapter.getTotalHeight();
 
-            int initialY;
+            int finalY;
             if (mAdapter.isReverse()) {
-                if (mDropDuration > 0) {
-                    initialY = getHeight();
-                } else {
-                    initialY = itemY;
-                }
+                finalY = mAdapter.getItemY(mNextViewIndex);
             } else {
-                if (mDropDuration > 0) {
-                    initialY = -getHeight();
-                } else {
-                    int trueHeight = mAdapter.getTrueHeight(mNextViewIndex);
-                    initialY = - mAdapter.getTotalHeight() + itemY + trueHeight;
-                }
+                int countItemsAlreadyDropped = countTotalItems - (mNextViewIndex + 1);
+                int sizeAlreadyOccupied = mAdapter.getItemY(countItemsAlreadyDropped);
+                finalY = -sizeAlreadyOccupied;
             }
 
-            //start item on the top of the view
-            dropSkyItem.setTranslationY(initialY);
             if(mDropDuration == 0) {
                 onStartShowingItem(dropSkyItem);
+                dropSkyItem.setTranslationY(finalY);
                 onEndShowingItem(dropSkyItem);
             } else {
-                int translationYByValue;
+                int initialY;
                 if (mAdapter.isReverse()) {
-                    translationYByValue = -mAdapter.getTotalHeight() + itemY;
+                    initialY = getHeight();
                 } else {
-                    translationYByValue = mAdapter.getTotalHeight() - mAdapter.getItemY(mAdapter.getCount() - mNextViewIndex - 1);
+                    initialY = -getHeight();
                 }
+                //start item on the top of the view
+                dropSkyItem.setTranslationY(initialY);
                 //translate the item until the top of the other view, the current "ground"
-                long currentDropDuration = mDropDuration/mAdapter.getCount();
-                ViewPropertyAnimator animator = dropSkyItem.animate().translationYBy(translationYByValue).setDuration(currentDropDuration);
+                long currentDropDuration = mDropDuration/ countTotalItems; //duration of the translation animation of this item
+                ViewPropertyAnimator animator = dropSkyItem.animate().translationY(finalY).setDuration(currentDropDuration);
                 animator.setListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animator) {

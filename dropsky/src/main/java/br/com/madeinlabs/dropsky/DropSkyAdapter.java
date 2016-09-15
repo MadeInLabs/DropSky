@@ -65,6 +65,10 @@ public class DropSkyAdapter {
         return totalHeight;
     }
 
+    /**
+     * @param index of the view
+     * @return y coordinate of view inside dropsky
+     */
     public int getItemY(int index) {
         int y = 0;
         for(int i = 0; i < index; i++) {
