@@ -13,12 +13,12 @@ public class DropSkyLayout extends RelativeLayout {
     private int mNextViewIndex;
     private long mDropDuration;
     private DropSkyListener mListener;
-    private boolean isShowing;
+    private boolean isChanging;
 
     public DropSkyLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         mListener = new EmptyDropSkyListener();
-        isShowing = false;
+        isChanging = false;
     }
 
     /**
@@ -34,20 +34,40 @@ public class DropSkyLayout extends RelativeLayout {
 
     /**
      The DropSkyLayout hide yourself with animation
-     @param hideDuration is the duration of animation
+     * @param hideDuration is the duration of animation
      */
-    public void hide(int hideDuration) {
-        int translateYValue = -mAdapter.getTotalHeight();
-        boolean reverse = mAdapter.isReverse();
-        if (reverse) {
-            translateYValue = -translateYValue;
-        }
+    public boolean hide(int hideDuration) {
+        if(!isChanging) {
+            isChanging = true;
+            int translateYValue = -mAdapter.getTotalHeight();
+            boolean reverse = mAdapter.isReverse();
+            if (reverse) {
+                translateYValue = -translateYValue;
+            }
 
-        if(hideDuration > 0) {
-            animate().setDuration(hideDuration).translationY(translateYValue);
-        } else {
-            setTranslationY(translateYValue);
+            if (hideDuration > 0) {
+                animate().setDuration(hideDuration).translationY(translateYValue).setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animator) {
+                    }
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        isChanging = false;
+                    }
+                    @Override
+                    public void onAnimationCancel(Animator animator) {
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animator animator) {
+                    }
+                });
+            } else {
+                setTranslationY(translateYValue);
+                isChanging = false;
+            }
+            return true;
         }
+        return false;
     }
 
     /**
@@ -68,13 +88,13 @@ public class DropSkyLayout extends RelativeLayout {
      * The DropSkyLayout show its items with animation
      * @param duration the duration of animation
      */
-    public void show(long duration) {
-        if(!isShowing) {
-            isShowing = true;
-            setTranslationY(0);
+    public boolean show(long duration) {
+        if(!isChanging) {
+            isChanging = true;
             if (getChildCount() > 0) {
                 removeAllViews();
             }
+            setTranslationY(0);
 
             boolean reverse = mAdapter.isReverse();
             if (reverse) {
@@ -85,7 +105,9 @@ public class DropSkyLayout extends RelativeLayout {
             mDropDuration = duration;
 
             showItem();
+            return true;
         }
+        return false;
     }
 
     /**
@@ -153,7 +175,7 @@ public class DropSkyLayout extends RelativeLayout {
             }
         } else {
             mListener.onDropEnd();
-            isShowing = false;
+            isChanging = false;
         }
     }
 

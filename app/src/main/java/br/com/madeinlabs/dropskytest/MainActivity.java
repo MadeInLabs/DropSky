@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onDropEnd() {
-                Toast.makeText(MainActivity.this, "The base was dropped", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -87,20 +86,21 @@ public class MainActivity extends AppCompatActivity {
         mDropSkyLayout.show();
     }
 
-    private void show() {
-        mDropSkyLayout.show(2000);
+    private boolean show() {
+        return mDropSkyLayout.show(2000);
     }
 
     private void hide(DropSkyItem dropSkyItem) {
-        mDropSkyLayout.hide(2000);
         mRoot.setBackgroundColor(dropSkyItem.getColor());
         mDropSkyLayout.setBackgroundColor(dropSkyItem.getColor());
 
-        mDropSkyLayout.hide(1000);
-        ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
+        boolean hiding = mDropSkyLayout.hide(1000);
+        if(hiding) {
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setHomeButtonEnabled(true);
+                actionBar.setDisplayHomeAsUpEnabled(true);
+            }
         }
     }
 
@@ -121,12 +121,14 @@ public class MainActivity extends AppCompatActivity {
         int itemId = item.getItemId();
         switch (itemId) {
             case android.R.id.home:
-                ActionBar actionBar = getSupportActionBar();
-                if(actionBar != null) {
-                    actionBar.setHomeButtonEnabled(false);
-                    actionBar.setDisplayHomeAsUpEnabled(false);
+                boolean showing = show();
+                if (showing) {
+                    ActionBar actionBar = getSupportActionBar();
+                    if(actionBar != null) {
+                        actionBar.setHomeButtonEnabled(false);
+                        actionBar.setDisplayHomeAsUpEnabled(false);
+                    }
                 }
-                show();
                 break;
         }
         return super.onOptionsItemSelected(item);
