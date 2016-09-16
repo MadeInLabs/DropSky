@@ -1,24 +1,31 @@
 package br.com.madeinlabs.dropsky;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
+import android.view.animation.LinearInterpolator;
 import android.widget.RelativeLayout;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class DropSkyLayout extends RelativeLayout {
     private DropSkyAdapter mAdapter;
-    private int mNextViewIndex;
-    private long mDropDuration;
     private DropSkyListener mListener;
     private boolean isChanging;
+    private TimeInterpolator mInterpolatorByItem;
 
     public DropSkyLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         mListener = new EmptyDropSkyListener();
         isChanging = false;
+        mInterpolatorByItem = new LinearInterpolator();
     }
 
     /**
@@ -53,6 +60,7 @@ public class DropSkyLayout extends RelativeLayout {
                     @Override
                     public void onAnimationEnd(Animator animator) {
                         isChanging = false;
+                        mListener.onHideEnd();
                     }
                     @Override
                     public void onAnimationCancel(Animator animator) {
@@ -96,94 +104,92 @@ public class DropSkyLayout extends RelativeLayout {
             }
             setTranslationY(0);
 
-            boolean reverse = mAdapter.isReverse();
-            if (reverse) {
-                mNextViewIndex = 0;
+            int countTotalItems = mAdapter.getCount();
+            int index;
+            if (mAdapter.isReverse()) {
+                index = 0;
             } else {
-                mNextViewIndex = mAdapter.getCount() - 1;
+                index = countTotalItems - 1;
             }
-            mDropDuration = duration;
 
-            showItem();
+            List<Animator> animators = new LinkedList<>();
+            while (index >= 0 && index < countTotalItems) {
+                final DropSkyItem dropSkyItem = mAdapter.getDropSkyItem(index);
+                addView(dropSkyItem);
+                ViewGroup.LayoutParams layoutParams = dropSkyItem.getLayoutParams();
+                layoutParams.height = mAdapter.getTotalHeight();
+
+                int finalY;
+                if (mAdapter.isReverse()) {
+                    finalY = mAdapter.getItemY(index);
+                } else {
+                    int countItemsAlreadyDropped = countTotalItems - (index + 1);
+                    int sizeAlreadyOccupied = mAdapter.getItemY(countItemsAlreadyDropped);
+                    finalY = -sizeAlreadyOccupied;
+                }
+
+                if(duration == 0) {
+                    onStartShowingItem(dropSkyItem, index);
+                    dropSkyItem.setTranslationY(finalY);
+                    onEndShowingItem(dropSkyItem, index);
+                } else {
+                    int initialY;
+                    if (mAdapter.isReverse()) {
+                        initialY = getHeight();
+                    } else {
+                        initialY = -getHeight();
+                    }
+                    long itemShowDuration = duration/ countTotalItems;
+                    dropSkyItem.setTranslationY(initialY);
+
+                    Animator animator = ObjectAnimator.ofFloat(dropSkyItem, View.TRANSLATION_Y, initialY, finalY);
+                    animator.setDuration(itemShowDuration);
+                    animator.setInterpolator(mInterpolatorByItem);
+                    animators.add(animator);
+
+                    final int finalI = index;
+                    animator.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animator) {
+                            onStartShowingItem(dropSkyItem, finalI);
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animator) {
+                            onEndShowingItem(dropSkyItem, finalI);
+                        }
+                    });
+                }
+
+                if (mAdapter.isReverse()) {
+                    index++;
+                } else {
+                    index--;
+                }
+            }
+
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.playSequentially(animators);
+            animatorSet.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    mListener.onShowEnd();
+                    isChanging = false;
+                }
+            });
+            animatorSet.start();
             return true;
         }
         return false;
     }
 
-    /**
-     *Shows next item on the adapter's order
-     */
-    private void showItem() {
-        int countTotalItems = mAdapter.getCount();
-        if(mNextViewIndex >= 0 && mNextViewIndex < countTotalItems) {
-            final DropSkyItem dropSkyItem = mAdapter.getDropSkyItem(mNextViewIndex);
-            addView(dropSkyItem);
-            ViewGroup.LayoutParams layoutParams = dropSkyItem.getLayoutParams();
-            layoutParams.height = mAdapter.getTotalHeight();
-
-            int finalY;
-            if (mAdapter.isReverse()) {
-                finalY = mAdapter.getItemY(mNextViewIndex);
-            } else {
-                int countItemsAlreadyDropped = countTotalItems - (mNextViewIndex + 1);
-                int sizeAlreadyOccupied = mAdapter.getItemY(countItemsAlreadyDropped);
-                finalY = -sizeAlreadyOccupied;
-            }
-
-            if(mDropDuration == 0) {
-                onStartShowingItem(dropSkyItem);
-                dropSkyItem.setTranslationY(finalY);
-                onEndShowingItem(dropSkyItem);
-            } else {
-                int initialY;
-                if (mAdapter.isReverse()) {
-                    initialY = getHeight();
-                } else {
-                    initialY = -getHeight();
-                }
-                //start item on the top of the view
-                dropSkyItem.setTranslationY(initialY);
-                //translate the item until the top of the other view, the current "ground"
-                long currentDropDuration = mDropDuration/ countTotalItems; //duration of the translation animation of this item
-                ViewPropertyAnimator animator = dropSkyItem.animate().translationY(finalY).setDuration(currentDropDuration);
-                animator.setListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animator) {
-                        onStartShowingItem(dropSkyItem);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animator) {
-                        onEndShowingItem(dropSkyItem);
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animator) {
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animator) {
-                    }
-                });
-            }
-        } else {
-            mListener.onDropEnd();
-            isChanging = false;
-        }
+    private void onStartShowingItem(DropSkyItem dropSkyItem, int i) {
+        mListener.onItemShowStart(dropSkyItem.mViewContainer, i);
     }
 
-    private void onStartShowingItem(DropSkyItem dropSkyItem) {
-        mListener.onItemDropStart(dropSkyItem.mViewContainer, mNextViewIndex + 1);
-    }
-
-    private void onEndShowingItem(DropSkyItem dropSkyItem) {
-        if(mAdapter.isReverse()) {
-            mNextViewIndex++;
-        } else {
-            mNextViewIndex--;
-        }
-        mListener.onItemDropEnd(dropSkyItem.mViewContainer, mNextViewIndex + 1);
-        showItem();
+    private void onEndShowingItem(DropSkyItem dropSkyItem, int index) {
+        mListener.onItemShowEnd(dropSkyItem.mViewContainer, index);
     }
 
     public void setListener(DropSkyListener listener) {
@@ -198,34 +204,47 @@ public class DropSkyLayout extends RelativeLayout {
         return mAdapter;
     }
 
+    public void setItemInterpolator(TimeInterpolator itemInterpolator) {
+        mInterpolatorByItem = itemInterpolator;
+    }
+
     public interface DropSkyListener {
         /**
          * It's called when each item finishes of been animated
          * @param view is the item that was animated
          * @param index is the index of the item that was animated
          */
-        void onItemDropEnd(View view, int index);
+        void onItemShowEnd(View view, int index);
         /**
          * It's called when each item starts of been animated
          * @param view is the item animated
          * @param index is the index of the item animated
          */
-        void onItemDropStart(View view, int index);
+        void onItemShowStart(View view, int index);
         /**
          * It's called when all the items were animated
          */
-        void onDropEnd();
+        void onShowEnd();
+
+        /**
+         * It's called when the DropSky is hided
+         */
+        void onHideEnd();
     }
 
     private class EmptyDropSkyListener implements DropSkyListener {
         @Override
-        public void onItemDropEnd(View view, int index) {
+        public void onItemShowEnd(View view, int index) {
         }
         @Override
-        public void onItemDropStart(View view, int index) {
+        public void onItemShowStart(View view, int index) {
         }
         @Override
-        public void onDropEnd() {
+        public void onShowEnd() {
+        }
+        @Override
+        public void onHideEnd() {
+
         }
     }
 }
