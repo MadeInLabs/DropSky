@@ -3,8 +3,9 @@
     package="br.com.madeinlabs.dropskytest">
 
     <application
+        android:fullBackupContent="false"
         android:allowBackup="true"
-        android:icon="@drawable/cool_chicken"
+        android:icon="@drawable/ic_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
@@ -13,6 +14,15 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http"
+                    android:host="www.github.com"
+                    android:pathPrefix="/MadeInLabs/DropSky" />
             </intent-filter>
         </activity>
     </application>

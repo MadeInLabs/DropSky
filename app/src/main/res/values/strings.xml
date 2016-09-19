@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DropSkyTest</string>
+    <string name="app_name">DropSky</string>
     <string name="icon">icon</string>
     <string name="refresh">refresh</string>
     <string name="reverse">Reverse</string>
