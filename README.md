@@ -2,15 +2,15 @@
 
 Create a menu that items enter with a "drop" (top-down) or "fly" (bottom-up) animation.
 
-#Drop Animation
+# Drop Animation
 ![alt tag](https://github.com/MadeInLabs/DropSky/blob/master/dropsky-drop.gif)
 
-#Fly Animation
+# Fly Animation
 ![alt tag](https://github.com/MadeInLabs/DropSky/blob/master/dropsky-fly.gif)
 
 # How to use
 
-##1. Add DropSky as a dependency:
+## 1. Add DropSky as a dependency:
 
 * Gradle:
 
@@ -31,7 +31,7 @@ dependencies {
 </dependency>
 ```
 
-##2. Put the DropSkyLayout on your xml layout:
+## 2. Put the DropSkyLayout on your xml layout:
 
 ```xml
 <br.com.madeinlabs.dropsky.DropSkyLayout android:id="@+id/drop_sky"
@@ -51,7 +51,7 @@ If you want DropSky been scrolled you can put it inside a NestedScrollView, like
 </android.support.v4.widget.NestedScrollView>
 ```
 
-##3. So create your DropSkyAdapter and add your items on it (custom views) together with the background colors of each item:
+## 3. So create your DropSkyAdapter and add your items on it (custom views) together with the background colors of each item:
 
 ```java
 DropSkyAdapter adapter = new DropSkyAdapter(this);
@@ -68,7 +68,7 @@ DropSkyAdapter adapter = new DropSkyAdapter(this, reverseMode);
 ...
 ```
 
-##4. Then, show:
+## 4. Then, show:
 
 ```java
 mDropSkyLayout.show(2000);
